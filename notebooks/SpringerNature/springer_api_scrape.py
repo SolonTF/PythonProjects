@@ -1,55 +1,117 @@
+import os
 import requests
 import pandas as pd
-import os
+import matplotlib.pyplot as plt
 
-# Load your API key from environment
+# ----------------------------------------------------------
+# CONFIGURATION
+# ----------------------------------------------------------
+
+# Load API key
 API_KEY = os.getenv("SPRINGER_API_KEY")
 if not API_KEY:
-    raise ValueError("❌ Springer API key not found. Please export SPRINGER_API_KEY first.")
+    raise ValueError("❌ No API key found. Set SPRINGER_API_KEY in your environment.")
 
-# Correct Open Access API URL
-url = "https://api.springernature.com/openaccess/json"
+# Set the search term here
+QUERY = input("Enter a keyword to search Springer Open Access: ").strip()
 
-# Query parameters
+# Base endpoint
+URL = "https://api.springernature.com/openaccess/json"
+
 params = {
-    "q": "amyloidosis",
+    "q": QUERY,
     "api_key": API_KEY,
-    "p": 10
+    "p": 50   # number of results
 }
 
-# Send request
-response = requests.get(url, params=params)
-print("Status code:", response.status_code)
+# ----------------------------------------------------------
+# API REQUEST
+# ----------------------------------------------------------
 
-# Parse JSON
+print(f"\n🔍 Searching Springer Open Access for: '{QUERY}'")
+response = requests.get(URL, params=params)
+
+if response.status_code != 200:
+    print(f"❌ Error {response.status_code}: Could not contact Springer API.")
+    print(response.text)
+    exit()
+
 data = response.json()
-print("Response keys:", list(data.keys()))
 
-# Check if records exist
-if "records" not in data:
-    print("❌ No 'records' field in response. Full response:")
-    print(data)
-else:
-    # Prepare data
-    records = [
-        {
-            "Title": r.get("title"),
-            "Publication": r.get("publicationName"),
-            "URL": r.get("url")[0]["value"] if r.get("url") else None,
-            "Abstract": r.get("abstract"),
-            "PublicationDate": r.get("publicationDate")
-        }
-        for r in data["records"]
-    ]
+# If API indicates premium content, retry with openaccess/json
+if "error_description" in data:
+    print("⚠ Premium content detected — retrying request...")
+    response = requests.get(URL, params=params)
+    data = response.json()
 
-    df = pd.DataFrame(records)
+records = data.get("records", [])
 
-    # ✅ Automatically create the SpringerNature folder if missing
-    save_dir = os.path.join(os.getcwd(), "notebooks", "SpringerNature")
-    os.makedirs(save_dir, exist_ok=True)
+if not records:
+    print(f"❌ No open-access results found for '{QUERY}'. Try another term.")
+    exit()
 
-    # Save CSV in that folder
-    save_path = os.path.join(save_dir, "springer_open_amyloidosis.csv")
-    df.to_csv(save_path, index=False)
+print(f"✅ Found {len(records)} results.\n")
 
-    print(f"\n✅ Saved results to: {save_path}")
+
+# ----------------------------------------------------------
+# CONVERT TO DATAFRAME
+# ----------------------------------------------------------
+
+articles = []
+for r in records:
+    articles.append({
+        "Title": r.get("title", ""),
+        "Publication": r.get("journalTitle", ""),
+        "Year": r.get("onlinePublicationDate", "")[:4] if r.get("onlinePublicationDate") else "",
+        "Abstract": r.get("abstract", ""),
+        "URL": r.get("url", "")
+    })
+
+df = pd.DataFrame(articles)
+
+print("📄 Preview of results:")
+print(df.head(), "\n")
+
+
+# ----------------------------------------------------------
+# SUMMARY
+# ----------------------------------------------------------
+
+if len(df) > 0:
+    most_common_year = df["Year"].value_counts().idxmax()
+    top_journal = df["Publication"].value_counts().idxmax()
+
+    print("📊 SUMMARY")
+    print("--------------------------")
+    print(f"Most common publication year: {most_common_year}")
+    print(f"Most common journal: {top_journal}")
+    print(f"Total records: {len(df)}")
+    print("--------------------------\n")
+
+
+# ----------------------------------------------------------
+# SAVE TO CSV
+# ----------------------------------------------------------
+
+output_file = f"springer_{QUERY.replace(' ', '_')}.csv"
+df.to_csv(output_file, index=False)
+
+print(f"💾 Saved full results to: {output_file}\n")
+
+
+# ----------------------------------------------------------
+# PLOT RESULTS
+# ----------------------------------------------------------
+
+if len(df) > 0:
+    year_counts = df["Year"].value_counts().sort_index()
+
+    plt.figure(figsize=(10, 4))
+    year_counts.plot(kind="bar", color="steelblue")
+    plt.title(f"Publication Year Distribution for '{QUERY}'")
+    plt.xlabel("Year")
+    plt.ylabel("Count")
+    plt.tight_layout()
+    plt.show()
+
+print("🎉 Done!")

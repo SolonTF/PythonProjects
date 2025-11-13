@@ -5,4 +5,5 @@ scikit-learn #Machine learning and regression analysis.
 beautifulsoup4 #For web scraping.
 requests #For making HTTP requests.
 jupyter #For interactive computing and notebooks.
+ipykernel #To ensure compatibility with Jupyter notebooks.
 numpy #For numerical computing.

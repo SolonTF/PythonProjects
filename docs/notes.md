@@ -8,8 +8,14 @@ This folder contains explanations and short write-ups for each script or noteboo
 Before running the Springer Nature API scripts, set your API key in the terminal session:
 
 "bash
-export SPRINGER_API_KEY="dea03161d116acd1384e4d0b3c13642f"
+export SPRINGER_API_KEY="'''"
 pip install -r requirements.txt
 
+
+
+To push work back to the repo:
+git add .
+git commit -m "Describe your changes"
+git push
 
 
