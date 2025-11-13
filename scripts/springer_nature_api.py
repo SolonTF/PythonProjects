@@ -1,0 +1,85 @@
+import os
+import requests
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def fetch_springer_articles(query, page_size=50):
+    """Fetch open access articles from Springer Nature API for a given query."""
+    api_key = os.getenv("SPRINGER_API_KEY")
+    if not api_key:
+        raise EnvironmentError("SPRINGER_API_KEY not set. Please set it in your environment.")
+    base_url = "https://api.springernature.com/openaccess/json"
+    params = {
+        "api_key": api_key,
+        "q": query,
+        "p": page_size
+    }
+    response = requests.get(base_url, params=params)
+    response.raise_for_status()
+    data = response.json()
+    records = data.get("records", [])
+    return records
+
+def create_dataframe(records):
+    """Convert a list of record dicts into a pandas DataFrame."""
+    if not records:
+        return pd.DataFrame()
+    df = pd.json_normalize(records)
+    return df
+
+def summarize(df):
+    """Print summary statistics for the DataFrame, such as most common publication year and journal."""
+    if df.empty:
+        print("No records found for your query.")
+        return
+    # Extract year from publicationDate
+    if 'publicationDate' in df.columns:
+        years = df['publicationDate'].astype(str).str[:4]
+        year_counts = years.value_counts()
+        top_year = year_counts.idxmax()
+        top_year_count = year_counts.max()
+        print(f"Most common publication year: {top_year} ({top_year_count} articles)")
+    if 'journal' in df.columns:
+        journal_counts = df['journal'].value_counts()
+        top_journal = journal_counts.idxmax()
+        top_journal_count = journal_counts.max()
+        print(f"Most common journal: {top_journal} ({top_journal_count} articles)")
+
+def save_csv(df, query):
+    """Save DataFrame to CSV with filename based on query."""
+    filename = f"springer_{query.replace(' ', '_')}.csv"
+    df.to_csv(filename, index=False)
+    print(f"Saved {len(df)} records to {filename}")
+
+def plot_year_distribution(df):
+    """Plot a bar chart of publication years distribution."""
+    if df.empty or 'publicationDate' not in df.columns:
+        return
+    year_counts = df['publicationDate'].astype(str).str[:4].value_counts().sort_index()
+    year_counts.plot(kind='bar')
+    plt.title("Publication Year Distribution")
+    plt.xlabel("Year")
+    plt.ylabel("Number of articles")
+    plt.tight_layout()
+    plt.show()
+
+
+def main():
+    query = input("Enter query term for Springer Nature Open Access API: ").strip()
+    try:
+        records = fetch_springer_articles(query)
+    except Exception as e:
+        print(f"Error fetching articles: {e}")
+        return
+    df = create_dataframe(records)
+    summarize(df)
+    if not df.empty:
+        save_csv(df, query)
+        try:
+            plot_year_distribution(df)
+        except Exception as e:
+            print(f"Error plotting results: {e}")
+
+
+if __name__ == "__main__":
+    main()
