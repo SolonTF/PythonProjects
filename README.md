@@ -1,5 +1,4 @@
-# Python Practice Projects for Aspiring Data Scientist in Pharma & Health
-
+# Python Practice Projects for Aspiring Data Scientist in Pharma & Health  
 This repository is a collection of small Python projects, data science notebooks and learning exercises tailored for someone looking to build a career in pharmaceutical or healthcare data science, or even to spin up entrepreneurial analytics ideas. It focuses on practical skills like pulling real‑world datasets, cleaning and analysing data, and visualising results.  
 
 ## Structure  
@@ -15,13 +14,13 @@ This repository is a collection of small Python projects, data science noteboo
 - Simple regression and classification models using scikit‑learn for health‑related outcomes  
 
 ### Crossref API Script  
-The `scripts/springer_nature_api.py` file has been refactored to use the Crossref API instead of Springer’s service. You can run it to fetch open‑access metadata for a query term (e.g. "ageing biomarkers" or "drug repurposing"), save the results to a CSV and generate a quick publication‑year distribution chart. This can help you explore research trends, identify prolific journals and inspire new project ideas.  
+The `scripts/crossref_api.py` file fetches open‑access metadata from the Crossref API. You can run it to fetch open‑access metadata for a query term (e.g. "ageing biomarkers" or "drug repurposing"), save the results to a CSV and generate a quick publication‑year distribution chart. This can help you explore research trends, identify prolific journals and inspire new project ideas.  
 
-To execute the script:
+To execute the script:  
 
 ```bash
-python scripts/springer_nature_api.py
-```
+python scripts/crossref_api.py
+```  
 
 You will be prompted to enter a search query. The script will then contact the Crossref API, collect articles related to your keyword, and output a CSV file and a simple plot.  
 
@@ -30,4 +29,4 @@ You will be prompted to enter a search query. The script will then contact the C
 - Incorporate other public datasets relevant to pharma and health (clinical trial databases, adverse event reports, etc.)  
 - Experiment with interactive dashboards (Streamlit or Dash) to present findings in a business‑friendly way, useful for entrepreneurial pitches  
 
-Feel free to fork and adapt these projects to your own interests. Contributions that expand the scope towards other areas of data science or healthcare entrepreneurship are always welcome. 
+Feel free to fork and adapt these projects to your own interests. Contributions that expand the scope towards other areas of data science or healthcare entrepreneurship are always welcome.
