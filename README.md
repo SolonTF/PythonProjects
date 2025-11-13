@@ -1,15 +1,33 @@
-# Python Practice Projects
+# Python Practice Projects for Aspiring Data Scientist in Pharma & Health
 
-This repository contains small Python projects, data-science notebooks, and learning exercises.
+This repository is a collection of small Python projects, data science notebooks and learning exercises tailored for someone looking to build a career in pharmaceutical or healthcare data science, or even to spin up entrepreneurial analytics ideas. It focuses on practical skills like pulling real‑world datasets, cleaning and analysing data, and visualising results.  
 
-## Structure
-- **/scripts** – short Python scripts
-- **/data** – sample CSV files
-- **/notebooks** – Jupyter notebooks for analysis
-- **/docs** – explanations or project write-ups
+## Structure  
+- **/scripts/** — self‑contained Python scripts covering data acquisition, API integration and exploratory analysis  
+- **/data/** — example CSV datasets used in the scripts and notebooks  
+- **/notebooks/** — Jupyter notebooks demonstrating in‑depth analysis and exploratory workflows  
+- **/docs/** — explanatory write‑ups and summaries of projects, including interpretation of results  
 
-## Example Topics
-- Data visualisation with Matplotlib
-- Basic web scraping with BeautifulSoup
-- Pandas data cleaning and analysis
-- Simple regression with scikit-learn
+## Example Topics  
+- Data visualisation with Matplotlib to communicate study results  
+- Basic web scraping and API access (e.g. Crossref) to retrieve biomedical research articles  
+- Cleaning and analysing patient or trial data with Pandas  
+- Simple regression and classification models using scikit‑learn for health‑related outcomes  
+
+### Crossref API Script  
+The `scripts/springer_nature_api.py` file has been refactored to use the Crossref API instead of Springer’s service. You can run it to fetch open‑access metadata for a query term (e.g. "ageing biomarkers" or "drug repurposing"), save the results to a CSV and generate a quick publication‑year distribution chart. This can help you explore research trends, identify prolific journals and inspire new project ideas.  
+
+To execute the script:
+
+```bash
+python scripts/springer_nature_api.py
+```
+
+You will be prompted to enter a search query. The script will then contact the Crossref API, collect articles related to your keyword, and output a CSV file and a simple plot.  
+
+## Contribution & Extension Ideas  
+- Add notebooks showing deeper analysis of the Crossref output (e.g. co‑author networks or topic modelling)  
+- Incorporate other public datasets relevant to pharma and health (clinical trial databases, adverse event reports, etc.)  
+- Experiment with interactive dashboards (Streamlit or Dash) to present findings in a business‑friendly way, useful for entrepreneurial pitches  
+
+Feel free to fork and adapt these projects to your own interests. Contributions that expand the scope towards other areas of data science or healthcare entrepreneurship are always welcome. 
