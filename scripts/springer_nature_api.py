@@ -4,22 +4,32 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def fetch_springer_articles(query, page_size=50):
-    """Fetch open access articles from Springer Nature API for a given query."""
-    api_key = os.getenv("SPRINGER_API_KEY")
-    if not api_key:
-        raise EnvironmentError("SPRINGER_API_KEY not set. Please set it in your environment.")
+def fetch_springer_articles(query, api_key=None, page_size=50, max_records=200):
+    """Fetch open access articles from Springer Nature API for a given query, handling pagination."""
+    key = api_key or os.getenv("SPRINGER_API_KEY")
+    if not key:
+        raise EnvironmentError("SPRINGER_API_KEY not set. Please set it in your environment or pass api_key.")
     base_url = "https://api.springernature.com/openaccess/json"
-    params = {
-        "api_key": api_key,
-        "q": query,
-        "p": page_size
-    }
-    response = requests.get(base_url, params=params)
-    response.raise_for_status()
-    data = response.json()
-    records = data.get("records", [])
-    return records
+    all_records = []
+    start_index = 1  # API uses 1-based indexing for 's' start
+    while True:
+        params = {
+            "api_key": key,
+            "q": query,
+            "p": page_size,
+            "s": start_index
+        }
+        response = requests.get(base_url, params=params)
+        response.raise_for_status()
+        data = response.json()
+        records = data.get("records", [])
+        if not records:
+            break
+        all_records.extend(records)
+        if len(all_records) >= max_records:
+            break
+        start_index += page_size
+    return all_records
 
 
 def create_dataframe(records):
@@ -27,7 +37,7 @@ def create_dataframe(records):
     if not records:
         return pd.DataFrame()
     df = pd.json_normalize(records)
-    # Rename journalTitle to journal for easier summarization
+    # Rename journalTitle to journal for easier summarisation
     if 'journalTitle' in df.columns:
         df = df.rename(columns={'journalTitle': 'journal'})
     return df
@@ -38,7 +48,6 @@ def summarize(df):
     if df.empty:
         print("No records found for your query.")
         return
-    # Extract year from publicationDate
     if 'publicationDate' in df.columns:
         years = df['publicationDate'].astype(str).str[:4]
         year_counts = years.value_counts()
