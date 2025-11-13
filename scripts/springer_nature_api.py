@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 def fetch_springer_articles(query, page_size=50):
     """Fetch open access articles from Springer Nature API for a given query."""
     api_key = os.getenv("SPRINGER_API_KEY")
@@ -20,12 +21,17 @@ def fetch_springer_articles(query, page_size=50):
     records = data.get("records", [])
     return records
 
+
 def create_dataframe(records):
     """Convert a list of record dicts into a pandas DataFrame."""
     if not records:
         return pd.DataFrame()
     df = pd.json_normalize(records)
+    # Rename journalTitle to journal for easier summarization
+    if 'journalTitle' in df.columns:
+        df = df.rename(columns={'journalTitle': 'journal'})
     return df
+
 
 def summarize(df):
     """Print summary statistics for the DataFrame, such as most common publication year and journal."""
@@ -45,11 +51,13 @@ def summarize(df):
         top_journal_count = journal_counts.max()
         print(f"Most common journal: {top_journal} ({top_journal_count} articles)")
 
+
 def save_csv(df, query):
     """Save DataFrame to CSV with filename based on query."""
     filename = f"springer_{query.replace(' ', '_')}.csv"
     df.to_csv(filename, index=False)
     print(f"Saved {len(df)} records to {filename}")
+
 
 def plot_year_distribution(df):
     """Plot a bar chart of publication years distribution."""
