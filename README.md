@@ -8,10 +8,12 @@ This repository is a collection of small Python projects, data science noteboo
 - **/docs/** — explanatory write‑ups and summaries of projects, including interpretation of results  
 
 ## Example Topics  
+
+Self-learning (Python):
 - Data visualisation with Matplotlib to communicate study results  
 - Basic web scraping and API access (e.g. Crossref) to retrieve biomedical research articles
 
-Research assistant training (UCL):
+Research assistant training for MATLAB (UCL):
 - Chaos Game algorithms — generating fractals with iterative rules
 - Monte Carlo simulation — π estimation and stochastic modelling
 - Logistic map experiments — chaos, bifurcations and dynamical systems 
