@@ -8,10 +8,15 @@ This repository is a collection of small Python projects, data science noteboo
 - **/docs/** — explanatory write‑ups and summaries of projects, including interpretation of results  
 
 ## Example Topics  
+
+Self-learning (Python):
 - Data visualisation with Matplotlib to communicate study results  
-- Basic web scraping and API access (e.g. Crossref) to retrieve biomedical research articles  
-- Cleaning and analysing patient or trial data with Pandas  
-- Simple regression and classification models using scikit‑learn for health‑related outcomes  
+- Basic web scraping and API access (e.g. Crossref) to retrieve biomedical research articles
+
+Research assistant training for MATLAB (UCL):
+- Chaos Game algorithms — generating fractals with iterative rules
+- Monte Carlo simulation — π estimation and stochastic modelling
+- Logistic map experiments — chaos, bifurcations and dynamical systems 
 
 ### Crossref API Script  
 The `scripts/crossref_api.py` file fetches open‑access metadata from the Crossref API. You can run it to fetch open‑access metadata for a query term (e.g. "ageing biomarkers" or "drug repurposing"), save the results to a CSV and generate a quick publication‑year distribution chart. This can help you explore research trends, identify prolific journals and inspire new project ideas.  
